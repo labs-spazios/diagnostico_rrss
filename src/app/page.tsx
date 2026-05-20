@@ -31,11 +31,10 @@ const QUESTIONS: Question[] = [
     id: 2,
     cat: 'Capacidad de pago',
     txt: '¿Podrías destinar $300.000 por mes a ser dueño?',
-    sub: 'Con eso ya calificás para al menos 3 formas distintas.',
+    sub: 'Con eso podemos evaluar tus opciones.',
     opts: [
       { txt: 'Sí, puedo sin problema',                s: { a: 0, c: 3, i: 0 } },
       { txt: 'Sí, pero tendría que acomodar algo',    s: { a: 0, c: 2, i: 0 } },
-      { txt: 'Ahora no, pero en unos meses podría',   s: { a: 0, c: 1, i: 0 } },
       { txt: 'No, por ahora está lejos',              s: { a: 0, c: 0, i: 0 } },
     ],
   },
@@ -46,7 +45,6 @@ const QUESTIONS: Question[] = [
     sub: '',
     opts: [
       { txt: 'Cuanto antes, lo estoy buscando',       s: { a: 0, c: 0, i: 3 } },
-      { txt: 'En el próximo año',                     s: { a: 0, c: 0, i: 2 } },
       { txt: 'En algún momento, no tengo apuro',      s: { a: 0, c: 0, i: 1 } },
       { txt: 'No lo tengo claro todavía',             s: { a: 0, c: 0, i: 0 } },
     ],
@@ -141,7 +139,7 @@ export default function Home() {
           </div>
           <div className="izq-stat">
             <div className="izq-stat-num">+4.000</div>
-            <div className="izq-stat-label">personas ya son dueñas con alguno de los 20 caminos de JMT</div>
+            <div className="izq-stat-label">Dueños hechos</div>
           </div>
           <div className="izq-stat">
             <div className="izq-stat-num">20</div>
@@ -237,7 +235,7 @@ export default function Home() {
                   type="tel"
                   placeholder="Ej: 1134567890"
                   value={tel}
-                  onChange={e => setTel(e.target.value)}
+                  onChange={e => setTel(e.target.value.replace(/\D/g, ''))}
                   onKeyDown={e => e.key === 'Enter' && tel.trim().length >= 8 && mostrarRes()}
                   autoFocus
                 />
@@ -258,33 +256,9 @@ export default function Home() {
           <div>
             <div className="res-badge rojo">Calificás para ser dueño hoy</div>
             <div className="res-titulo">{nombre}, tenés lo que necesitás para arrancar.</div>
-            <div className="res-sub">No hace falta esperar ni tener más. El siguiente paso es entender cuál de los caminos aplica a tu situación exacta.</div>
-            <div className="res-datos">
-              <div className="res-datos-title">Tu situación en números</div>
-              <div className="res-dato">
-                <span className="res-dato-label">Capacidad de pago</span>
-                <span className="res-dato-val" style={{ color: 'var(--rojo)' }}>Califica</span>
-              </div>
-              <div className="res-dato">
-                <span className="res-dato-label">Caminos disponibles</span>
-                <span className="res-dato-val">Al menos 3</span>
-              </div>
-              <div className="res-dato">
-                <span className="res-dato-label">Siguiente paso</span>
-                <span className="res-dato-val">Hablar con Maca</span>
-              </div>
-            </div>
+            <div className="res-sub">En breve te escribe Maca, la asistente de Juan Manuel, para mostrarte el camino concreto.</div>
             <button className="btn-cta negro">Me interesa saber cómo →</button>
-            <div className="res-nota">En breve te escribe Maca, la asistente de Juan Manuel, para mostrarte el camino concreto.</div>
-            <details>
-              <summary>Ver resumen</summary>
-              <div className="resumen-box">
-                <strong>Nombre:</strong> {nombre}<br />
-                <strong>WhatsApp:</strong> {tel}<br />
-                <strong>Segmento:</strong> A – CALIFICA · Derivar a Maca inmediatamente.<br />
-                <strong>Score:</strong> ahorro {scores.a} · cuota {scores.c} · intención {scores.i}
-              </div>
-            </details>
+            <div className="res-nota">Maca se va a comunicar con vos pronto.</div>
           </div>
         )}
 
@@ -361,21 +335,6 @@ export default function Home() {
                 Perfecto, te contactamos pronto.
               </div>
             )}
-            <details style={{ marginTop: '1rem' }}>
-              <summary>Ver resumen</summary>
-              <div className="resumen-box">
-                <strong>Nombre:</strong> {nombre}<br />
-                <strong>WhatsApp:</strong> {tel}<br />
-                {canalConfirmed && canal === 'mail' && mailB && (
-                  <><strong>Mail:</strong> {mailB}<br /></>
-                )}
-                {canalConfirmed && (
-                  <><strong>Canal elegido:</strong> {canal === 'wsp' ? 'WhatsApp' : 'Mail'}<br /></>
-                )}
-                <strong>Segmento:</strong> B – NO CALIFICA · Nurturing. Canal a confirmar.<br />
-                <strong>Score:</strong> ahorro {scores.a} · cuota {scores.c} · intención {scores.i}
-              </div>
-            </details>
           </div>
         )}
       </div>
