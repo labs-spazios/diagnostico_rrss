@@ -16,7 +16,7 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  title: 'Test del Dueño · Más Dueños',
+  title: 'Diagnóstico del Dueño · Más Dueños',
   description: '7 preguntas. 2 minutos. Te decimos exactamente dónde estás y qué podés hacer hoy.',
 };
 
