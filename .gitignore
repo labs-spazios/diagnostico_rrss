@@ -42,4 +42,9 @@ next-env.d.ts
 
 # dev screenshots
 ss-*.png
+ss*.png
 screenshot-*.png
+
+# internal
+.claude/
+.modified
