@@ -54,6 +54,9 @@ const QUESTIONS: Question[] = [
 const N = QUESTIONS.length;
 const LETRAS = ['A', 'B', 'C', 'D'];
 
+const API_URL = 'https://crm.asistente-ia.cloud/api/external/test-results';
+const API_KEY = 'test-mas-dueno-2026-K7pN3xQ9wR';
+
 function calcSegmento(scores: ScoreMap): Segment {
   if (scores.c >= 2 || scores.a >= 3) return 'A';
   return 'B';
@@ -83,6 +86,7 @@ export default function Home() {
   const [canal, setCanal] = useState<'wsp' | 'mail' | ''>('');
   const [mailB, setMailB] = useState('');
   const [canalConfirmed, setCanalConfirmed] = useState(false);
+  const [leadId, setLeadId] = useState<string>('');
 
   function selectOption(qId: number, optIdx: number, isLast: boolean) {
     const q = QUESTIONS.find(q => q.id === qId)!;
@@ -109,11 +113,44 @@ export default function Home() {
     }, 320);
   }
 
+  async function iniciarTest() {
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
+        body: JSON.stringify({ nombre }),
+      });
+      const data = await res.json();
+      if (data.id) setLeadId(data.id);
+    } catch {}
+    setStep(1);
+  }
+
   function goBack(current: number) {
     setStep(current <= 1 ? 'welcome' : current - 1);
   }
 
-  function mostrarRes() {
+  async function mostrarRes() {
+    if (leadId) {
+      try {
+        await fetch(`${API_URL}/${leadId}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
+          body: JSON.stringify({
+            telefono: tel,
+            scoreAhorro: scores.a,
+            scoreCuota: scores.c,
+            scoreIntencion: scores.i,
+            scoreTotal: scores.a + scores.c + scores.i,
+            resp1: String(selections[1]),
+            resp2: String(selections[2]),
+            resp3: String(selections[3]),
+            segmento,
+            completado: true,
+          }),
+        });
+      } catch {}
+    }
     setStep('result');
   }
 
@@ -180,7 +217,7 @@ export default function Home() {
                   placeholder="Ej: Martín"
                   value={nombre}
                   onChange={e => setNombre(e.target.value)}
-                  onKeyDown={e => e.key === 'Enter' && nombre.trim().length >= 2 && setStep(1)}
+                  onKeyDown={e => e.key === 'Enter' && nombre.trim().length >= 2 && iniciarTest()}
                   autoFocus
                 />
               </div>
@@ -188,7 +225,7 @@ export default function Home() {
             <button
               className="btn"
               disabled={nombre.trim().length < 2}
-              onClick={() => setStep(1)}
+              onClick={iniciarTest}
             >
               Arrancar →
             </button>
