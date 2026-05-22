@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 
 type ScoreMap = { a: number; c: number; i: number };
@@ -87,6 +87,47 @@ export default function Home() {
   const [mailB, setMailB] = useState('');
   const [canalConfirmed, setCanalConfirmed] = useState(false);
   const [leadId, setLeadId] = useState<string>('');
+
+  const stateRef = useRef({ leadId, tel, scores, selections, step, segmento });
+  useEffect(() => {
+    stateRef.current = { leadId, tel, scores, selections, step, segmento };
+  });
+
+  const inactivityRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  function enviarParcial() {
+    const s = stateRef.current;
+    if (!s.leadId || s.step === 'result') return;
+    fetch(`${API_URL}/${s.leadId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
+      body: JSON.stringify({
+        ...(s.tel && { telefono: s.tel }),
+        scoreAhorro: s.scores.a,
+        scoreCuota: s.scores.c,
+        scoreIntencion: s.scores.i,
+        scoreTotal: s.scores.a + s.scores.c + s.scores.i,
+        ...(s.selections[1] !== undefined && { resp1: String(s.selections[1]) }),
+        ...(s.selections[2] !== undefined && { resp2: String(s.selections[2]) }),
+        ...(s.selections[3] !== undefined && { resp3: String(s.selections[3]) }),
+        segmento: s.segmento,
+        completado: false,
+      }),
+      keepalive: true,
+    }).catch(() => {});
+  }
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', enviarParcial);
+    return () => window.removeEventListener('beforeunload', enviarParcial);
+  }, []);
+
+  useEffect(() => {
+    if (!leadId || step === 'result') return;
+    if (inactivityRef.current) clearTimeout(inactivityRef.current);
+    inactivityRef.current = setTimeout(enviarParcial, 3 * 60 * 1000);
+    return () => { if (inactivityRef.current) clearTimeout(inactivityRef.current); };
+  }, [step, leadId]);
 
   function selectOption(qId: number, optIdx: number, isLast: boolean) {
     const q = QUESTIONS.find(q => q.id === qId)!;
