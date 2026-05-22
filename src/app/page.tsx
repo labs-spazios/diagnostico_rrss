@@ -118,7 +118,7 @@ export default function Home() {
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'x-api-key': API_KEY },
-        body: JSON.stringify({ nombre }),
+        body: JSON.stringify({ nombre, origen: 'web test' }),
       });
       const data = await res.json();
       if (data.id) setLeadId(data.id);
