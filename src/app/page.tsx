@@ -335,8 +335,6 @@ export default function Home() {
             <div className="res-badge rojo">Calificás para ser dueño hoy</div>
             <div className="res-titulo">{nombre}, tenés lo que necesitás para arrancar.</div>
             <div className="res-sub">En breve te escribe Maca, la asistente de Juan Manuel, para mostrarte el camino concreto.</div>
-            <button className="btn-cta negro">Me interesa saber cómo →</button>
-            <div className="res-nota">Maca se va a comunicar con vos pronto.</div>
           </div>
         )}
 
